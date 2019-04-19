@@ -1,0 +1,60 @@
+---
+
+- name: Compile uriparse from source
+  hosts: server
+  vars:
+    uriparser_version: "0.9.1"
+
+  tasks:
+  - name: Installing uriparser Dependencies
+    become: yes
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+      autoclean: yes
+      autoremove: yes
+    with_items:
+      - gcc
+      - make
+      - automake
+      - libtool-bin
+      - unzip
+
+  - name: Downloading uriparser
+    get_url:
+      url: "https://github.com/uriparser/uriparser/archive/uriparser-{{ uriparser_version }}.tar.gz"
+      dest: "/tmp"
+    register: uriparser_source
+  
+  - name: Directory uriparser
+    stat:
+      path: /tmp/uriparser-uriparser-{{ uriparser_version }}
+    register: uriparser_source_details
+
+  - name: Unpacking uriparser
+    unarchive:
+      copy: no
+      dest: "/tmp/"
+      src: "/tmp/uriparser-uriparser-{{ uriparser_version }}.tar.gz"
+    register: uriparser_source_unpack
+    when: uriparser_source.changed or uriparser_source_details.stat or uriparser_source_details.stat.isdir == false
+
+  - name: Generate configure for uriparser
+    command: "./autogen.sh"
+    args:
+      chdir: "/tmp/uriparser-uriparser-{{ uriparser_version }}"
+    when: uriparser_source_unpack.changed
+    register: uriparser_autogen
+
+  - name: Configuring uriparser
+    command: "./configure --prefix=/usr/local --disable-test --disable-doc"
+    args:
+      chdir: "/tmp/uriparser-uriparser-{{ uriparser_version }}"
+    when: uriparser_source_unpack.changed
+    register: uriparser_configure
+
+  - name: Installing uriparser
+    become: yes
+    shell: make && make install
+    args:
+      chdir: "/tmp/uriparser-uriparser-{{ uriparser_version }}"

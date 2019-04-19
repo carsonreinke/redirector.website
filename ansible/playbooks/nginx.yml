@@ -1,0 +1,106 @@
+---
+
+- name: Compile Nginx from sources
+  hosts: server
+  vars:
+    nginx_version: nginx-1.15.9
+    nginx_tarball_url: "http://nginx.org/download/{{ nginx_version }}.tar.gz"
+    nginx_install_dir: "/tmp/{{ nginx_version }}"
+    nginx_sbin_path: "/usr/sbin/nginx"
+    nginx_conf_path: "/etc/nginx/nginx.conf"
+    nginx_custom_modules: ""
+
+  tasks:
+  - name: Installing Nginx Dependencies
+    become: yes
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+      autoclean: yes
+      autoremove: yes
+    with_items:
+      - gcc
+      - make
+      - unzip
+      - libssl-dev
+      - zlib1g-dev
+      - libpcre3-dev
+      - libidn2-0-dev
+
+  - name: Downloading Redirector
+    get_url:
+      url: "https://github.com/carsonreinke/redirector/archive/master.tar.gz"
+      dest: "/tmp"
+    register: redirector_source
+
+  - name: Directory Redirector
+    stat:
+      path: /tmp/redirector-master
+    register: redirector_source_details
+
+  - name: Unpacking Redirector
+    unarchive:
+      copy: no
+      dest: "/tmp/"
+      src: "/tmp/redirector-master.tar.gz"
+    register: redirector_source_unpack
+    when: redirector_source.changed or redirector_source_details.stat or redirector_source_details.stat.isdir == false
+
+  - name: Downloading Nginx sources
+    get_url:
+      url: "{{ nginx_tarball_url }}"
+      dest: "/tmp/{{ nginx_version }}.tar.gz"
+    register: nginx_source
+
+  - name: Unpacking Nginx
+    unarchive:
+      copy: no
+      dest: /tmp/
+      src: "{{ nginx_source.dest }}"
+    when: nginx_source.changed
+    register: nginx_source_unpack
+
+  #- name: Create required Nginx dirs
+  #  become: yes
+  #  file:
+  #    path: /etc/nginx
+  #    state: directory
+  #    owner: root
+  #    mode: 0755
+
+  - name: Configuring Nginx source with custom modules
+    command: "./configure --prefix=/usr/local --conf-path={{ nginx_conf_path }} --with-http_ssl_module --add-module=/tmp/redirector-master"
+    args:
+      chdir: "{{ nginx_install_dir }}"
+    when: nginx_source_unpack.changed or redirector_source_unpack.changed
+    register: nginx_configure
+
+  - name: Installing Nginx
+    become: yes
+    shell: make && make install
+    args:
+      chdir: "{{ nginx_install_dir }}"
+
+  # - name: Creating Nginx conf file
+  #   become: yes
+  #   template:
+  #     src: nginx.conf
+  #     dest: "{{ nginx_conf_path }}"
+  #     owner: "{{ ansible_user }}"
+  #     group: "{{ ansible_user }}"
+  #     mode: 0644
+
+  # - name: Installing Nginx init script (service)
+  #   become: yes
+  #   template:
+  #     src: nginx.init
+  #     dest: /etc/init.d/nginx
+  #     owner: root
+  #     group: root
+  #     mode: 0755
+
+  # - name: Starting Nginx
+  #   become: yes
+  #   service:
+  #     name: nginx
+  #     state: started
