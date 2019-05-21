@@ -58,3 +58,6 @@
     shell: make && make install
     args:
       chdir: "/tmp/uriparser-uriparser-{{ uriparser_version }}"
+  
+  - name: Exec ldconfig #Refreshes library cache
+    command: ldconfig

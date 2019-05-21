@@ -6,9 +6,8 @@
     nginx_version: nginx-1.15.9
     nginx_tarball_url: "http://nginx.org/download/{{ nginx_version }}.tar.gz"
     nginx_install_dir: "/tmp/{{ nginx_version }}"
-    nginx_sbin_path: "/usr/sbin/nginx"
     nginx_conf_path: "/etc/nginx/nginx.conf"
-    nginx_custom_modules: ""
+    nginx_log_path: "/var/log/nginx"
 
   tasks:
   - name: Installing Nginx Dependencies
@@ -60,16 +59,16 @@
     when: nginx_source.changed
     register: nginx_source_unpack
 
-  #- name: Create required Nginx dirs
-  #  become: yes
-  #  file:
-  #    path: /etc/nginx
-  #    state: directory
-  #    owner: root
-  #    mode: 0755
+  - name: Create Nginx log directory
+    become: yes
+    file:
+      path: "{{ nginx_log_path }}"
+      state: directory
+      owner: root
+      mode: 0755
 
   - name: Configuring Nginx source with custom modules
-    command: "./configure --prefix=/usr/local --conf-path={{ nginx_conf_path }} --with-http_ssl_module --add-module=/tmp/redirector-master"
+    command: "./configure --prefix=/usr/local --conf-path={{ nginx_conf_path }} --error-log-path={{ nginx_log_path }}/error.log --http-log-path={{ nginx_log_path }}/access.log --with-http_ssl_module --add-module=/tmp/redirector-master"
     args:
       chdir: "{{ nginx_install_dir }}"
     when: nginx_source_unpack.changed or redirector_source_unpack.changed
@@ -81,26 +80,28 @@
     args:
       chdir: "{{ nginx_install_dir }}"
 
-  # - name: Creating Nginx conf file
-  #   become: yes
-  #   template:
-  #     src: nginx.conf
-  #     dest: "{{ nginx_conf_path }}"
-  #     owner: "{{ ansible_user }}"
-  #     group: "{{ ansible_user }}"
-  #     mode: 0644
+  - name: Creating Nginx conf file
+    become: yes
+    copy:
+      src: "{{ playbook_dir }}/../nginx.conf"
+      dest: "{{ nginx_conf_path }}"
+      owner: root
+      group: root
+      mode: 0644
 
-  # - name: Installing Nginx init script (service)
-  #   become: yes
-  #   template:
-  #     src: nginx.init
-  #     dest: /etc/init.d/nginx
-  #     owner: root
-  #     group: root
-  #     mode: 0755
+  - name: Installing Nginx systemd service
+    become: yes
+    copy:
+      src: "{{ playbook_dir }}/../nginx.service"
+      dest: "/lib/systemd/system/nginx.service"
+      owner: root
+      group: root
+      mode: 0644
 
-  # - name: Starting Nginx
-  #   become: yes
-  #   service:
-  #     name: nginx
-  #     state: started
+  - name: Enable and start Nginx systemd service
+    become: yes
+    systemd:
+      name: nginx
+      daemon_reload: yes
+      enabled: yes
+      state: started
