@@ -1,0 +1,13 @@
+#sudo apt install certbot
+
+#http challenge
+#certbot certonly --standalone
+#${webroot-path}/.well-known/acme-challenge
+#certbot certonly --webroot -w /var/local/www/testing.reinke.co -d testing.reinke.co
+
+#mkdir /var/local/www
+#chmod
+
+#location /.well-known/acme-challenge/ {
+#  root /var/local/www/$host;
+#}

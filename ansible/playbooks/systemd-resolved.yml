@@ -1,0 +1,20 @@
+---
+
+- name: Update Systemd Resolved configuration
+  hosts: server
+  tasks:
+  - name: Creating Resolved conf file
+    become: yes
+    copy:
+      src: "{{ playbook_dir }}/../resolved.conf"
+      dest: "/etc/systemd/resolved.conf"
+      owner: root
+      group: root
+      mode: 0644
+  - name: Enable and start Systemd Resolved service
+    become: yes
+    systemd:
+      name: systemd-resolved
+      daemon_reload: yes
+      enabled: yes
+      state: restarted

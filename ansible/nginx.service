@@ -1,12 +1,14 @@
 [Unit]
 Description=The NGINX HTTP and reverse proxy server
-After=syslog.target network.target remote-fs.target nss-lookup.target
+After=network.target nss-lookup.target
 
 [Service]
 Type=forking
 PIDFile=/run/nginx.pid
 ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
+#See https://bugs.launchpad.net/ubuntu/+source/nginx/+bug/1581864
+ExecStartPost=/bin/sleep 0.1
 ExecReload=/usr/local/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true

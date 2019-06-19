@@ -68,10 +68,9 @@
       mode: 0755
 
   - name: Configuring Nginx source with custom modules
-    command: "./configure --prefix=/usr/local --conf-path={{ nginx_conf_path }} --error-log-path={{ nginx_log_path }}/error.log --http-log-path={{ nginx_log_path }}/access.log --with-http_ssl_module --add-module=/tmp/redirector-master"
+    command: "./configure --with-debug --prefix=/usr/local --conf-path={{ nginx_conf_path }} --pid-path=/run/nginx.pid --error-log-path={{ nginx_log_path }}/error.log --http-log-path={{ nginx_log_path }}/access.log --with-http_ssl_module --add-module=/tmp/redirector-master"
     args:
       chdir: "{{ nginx_install_dir }}"
-    when: nginx_source_unpack.changed or redirector_source_unpack.changed
     register: nginx_configure
 
   - name: Installing Nginx
@@ -104,4 +103,4 @@
       name: nginx
       daemon_reload: yes
       enabled: yes
-      state: started
+      state: restarted
