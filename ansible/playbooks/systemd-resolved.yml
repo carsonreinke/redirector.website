@@ -1,7 +1,7 @@
 ---
 
 - name: Update Systemd Resolved configuration
-  hosts: server
+  hosts: all
   tasks:
   - name: Creating Resolved conf file
     become: yes

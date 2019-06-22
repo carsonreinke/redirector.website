@@ -1,7 +1,7 @@
 ---
 
-- name: Compile uriparse from source
-  hosts: server
+- name: Compile uriparser from source
+  hosts: all
   vars:
     uriparser_version: "0.9.1"
 

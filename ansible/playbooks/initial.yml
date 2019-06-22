@@ -1,0 +1,13 @@
+---
+
+- name: Compile Nginx from sources
+  hosts: all
+
+- name: uriparser
+  import_playbook: uriparser.yml
+
+- name: resolved
+  import_playbook: systemd-resolved.yml
+
+- name: nginx
+  import_playbook: nginx.yml

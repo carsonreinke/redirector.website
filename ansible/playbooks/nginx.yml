@@ -1,7 +1,7 @@
 ---
 
 - name: Compile Nginx from sources
-  hosts: server
+  hosts: all
   vars:
     nginx_version: nginx-1.15.9
     nginx_tarball_url: "http://nginx.org/download/{{ nginx_version }}.tar.gz"
