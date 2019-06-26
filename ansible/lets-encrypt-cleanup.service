@@ -1,0 +1,6 @@
+[Unit]
+Description=Let's Encrypt cleaup old certificates
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/bin/lets-encrypt-cleanup.sh

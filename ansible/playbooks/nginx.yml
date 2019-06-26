@@ -8,6 +8,7 @@
     nginx_install_dir: "/tmp/{{ nginx_version }}"
     nginx_conf_path: "/etc/nginx/nginx.conf"
     nginx_log_path: "/var/log/nginx"
+    nginx_www_path: "/var/local/www"
 
   tasks:
   - name: Installing Nginx Dependencies
@@ -63,6 +64,14 @@
     become: yes
     file:
       path: "{{ nginx_log_path }}"
+      state: directory
+      owner: root
+      mode: 0755
+  
+  - name: Create Nginx www directory
+    become: yes
+    file:
+      path: "{{ nginx_www_path }}"
       state: directory
       owner: root
       mode: 0755

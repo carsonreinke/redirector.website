@@ -1,0 +1,8 @@
+[Unit]
+Description=Let's Encrypt create new certificates every hour
+
+[Timer]
+OnUnitActiveSec=1h
+
+[Install]
+WantedBy=timers.target

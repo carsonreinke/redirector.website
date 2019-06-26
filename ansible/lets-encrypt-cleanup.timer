@@ -1,0 +1,8 @@
+[Unit]
+Description=Let's Encrypt cleaup old certificates daily
+
+[Timer]
+OnUnitActiveSec=1d
+
+[Install]
+WantedBy=timers.target

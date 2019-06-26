@@ -1,9 +1,17 @@
 #sudo apt install certbot
+#sudo certbot register
+#chmod 2755 /etc/letsencrypt/live /etc/letsencrypt/archive
+
 
 #http challenge
 #certbot certonly --standalone
 #${webroot-path}/.well-known/acme-challenge
-#certbot certonly --webroot -w /var/local/www/testing.reinke.co -d testing.reinke.co
+
+#mkdir /var/local/www/testing.reinke.co
+#check if domain exists
+#certbot certonly -n --webroot -w /var/local/www/testing.reinke.co -d testing.reinke.co
+#flush access.log
+
 
 #mkdir /var/local/www
 #chmod
@@ -11,3 +19,4 @@
 #location /.well-known/acme-challenge/ {
 #  root /var/local/www/$host;
 #}
+

@@ -1,0 +1,6 @@
+[Unit]
+Description=Let's Encrypt create new certificates
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/bin/lets-encrypt-create.sh
