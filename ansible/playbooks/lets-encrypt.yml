@@ -1,22 +1,74 @@
-#sudo apt install certbot
-#sudo certbot register
-#chmod 2755 /etc/letsencrypt/live /etc/letsencrypt/archive
+---
 
+- name: Install and setup Let's Encrypt
+  hosts: all
 
-#http challenge
-#certbot certonly --standalone
-#${webroot-path}/.well-known/acme-challenge
+  tasks:
+  - name: Installing certbot
+    become: yes
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+      autoclean: yes
+      autoremove: yes
+    with_items:
+      - certbot
+  
+  - name: Accept and register Let's Encrypt
+    become: yes
+    command: "certbot register -m redirector@reinke.co --agree-tos"
+    args:
+      creates: "/etc/letsencrypt/accounts"
 
-#mkdir /var/local/www/testing.reinke.co
-#check if domain exists
-#certbot certonly -n --webroot -w /var/local/www/testing.reinke.co -d testing.reinke.co
-#flush access.log
+  - name: Change Let's Encrypt live folder permissions
+    become: yes
+    file:
+      path: "/etc/letsencrypt/live"
+      state: directory
+      owner: root
+      mode: 2755
+  
+  - name: Change Let's Encrypt archive folder permissions
+    become: yes
+    file:
+      path: "/etc/letsencrypt/archive"
+      state: directory
+      owner: root
+      mode: 2755
 
+  - name: Installing Let's Encrypt custom service scripts
+    become: yes
+    copy:
+      src: "{{item.src}}"
+      dest: "{{item.dest}}"
+      owner: root
+      group: root
+      mode: 0755
+    with_items:
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.sh", dest: "/usr/local/bin/lets-encrypt-cleanup.sh" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.sh", dest: "/usr/local/bin/lets-encrypt-create.sh" }
 
-#mkdir /var/local/www
-#chmod
-
-#location /.well-known/acme-challenge/ {
-#  root /var/local/www/$host;
-#}
-
+  - name: Installing Let's Encrypt custom systemd services
+    become: yes
+    copy:
+      src: "{{item.src}}"
+      dest: "{{item.dest}}"
+      owner: root
+      group: root
+      mode: 0644
+    with_items:
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.service", dest: "/lib/systemd/system/lets-encrypt-cleanup.service" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.timer", dest: "/lib/systemd/system/lets-encrypt-cleanup.timer" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.service", dest: "/lib/systemd/system/lets-encrypt-create.service" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.timer", dest: "/lib/systemd/system/lets-encrypt-create.timer" }
+  
+  - name: Enable and start Let's Encrypt custom systemd service
+    become: yes
+    systemd:
+      name: "{{ item }}.timer"
+      daemon_reload: yes
+      enabled: yes
+      state: started
+    with_items:
+    - lets-encrypt-cleanup
+    - lets-encrypt-create

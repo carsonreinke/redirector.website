@@ -11,3 +11,6 @@
 
 - name: nginx
   import_playbook: nginx.yml
+
+- name: lets-encrypt
+  import_playbook: lets-encrypt.yml
