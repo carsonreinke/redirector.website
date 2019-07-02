@@ -25,5 +25,5 @@
     ufw:
       direction: incoming
       default: deny
-      logging: low
+      logging: off
       state: enabled

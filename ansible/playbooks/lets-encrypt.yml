@@ -5,6 +5,7 @@
   vars:
     systemd_service_path: "/lib/systemd/system"
     lets_encrypt_path: "/etc/letsencrypt"
+    script_path: "/usr/local/bin"
 
   tasks:
 
@@ -49,8 +50,8 @@
       group: root
       mode: 0755
     with_items:
-    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.sh", dest: "/usr/local/bin/lets-encrypt-cleanup.sh" }
-    - { src: "{{ playbook_dir }}/../lets-encrypt-create.sh", dest: "/usr/local/bin/lets-encrypt-create.sh" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.sh", dest: "{{ script_path }}/lets-encrypt-cleanup.sh" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.sh", dest: "{{ script_path }}/lets-encrypt-create.sh" }
 
   - name: Installing Let's Encrypt custom systemd services
     become: yes
