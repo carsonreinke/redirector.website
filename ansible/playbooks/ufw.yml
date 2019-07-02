@@ -1,0 +1,29 @@
+---
+
+- name: Setup ufw firewall
+  hosts: all
+  tasks:
+
+  - name: Apply ufw rule for ssh
+    ufw:
+      rule: limit
+      port: ssh
+      proto: tcp
+      log: no
+  
+  - name: Apply ufw rules
+    ufw:
+      rule: allow
+      port: "{{ item }}"
+      proto: tcp
+      log: no
+    with_items:
+    - "http"
+    - "https"
+  
+  - name: Enable ufw
+    ufw:
+      direction: incoming
+      default: deny
+      logging: low
+      state: enabled

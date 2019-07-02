@@ -11,6 +11,7 @@
     nginx_www_path: "/var/local/www"
 
   tasks:
+  
   - name: Installing Nginx Dependencies
     become: yes
     apt:

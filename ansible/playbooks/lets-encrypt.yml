@@ -2,8 +2,12 @@
 
 - name: Install and setup Let's Encrypt
   hosts: all
+  vars:
+    systemd_service_path: "/lib/systemd/system"
+    lets_encrypt_path: "/etc/letsencrypt"
 
   tasks:
+
   - name: Installing certbot
     become: yes
     apt:
@@ -18,12 +22,12 @@
     become: yes
     command: "certbot register -m redirector@reinke.co --agree-tos"
     args:
-      creates: "/etc/letsencrypt/accounts"
+      creates: "{{ lets_encrypt_path }}/accounts"
 
   - name: Change Let's Encrypt live folder permissions
     become: yes
     file:
-      path: "/etc/letsencrypt/live"
+      path: "{{ lets_encrypt_path }}/live"
       state: directory
       owner: root
       mode: 2755
@@ -31,7 +35,7 @@
   - name: Change Let's Encrypt archive folder permissions
     become: yes
     file:
-      path: "/etc/letsencrypt/archive"
+      path: "{{ lets_encrypt_path }}/archive"
       state: directory
       owner: root
       mode: 2755
@@ -39,8 +43,8 @@
   - name: Installing Let's Encrypt custom service scripts
     become: yes
     copy:
-      src: "{{item.src}}"
-      dest: "{{item.dest}}"
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
       owner: root
       group: root
       mode: 0755
@@ -51,16 +55,16 @@
   - name: Installing Let's Encrypt custom systemd services
     become: yes
     copy:
-      src: "{{item.src}}"
-      dest: "{{item.dest}}"
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
       owner: root
       group: root
       mode: 0644
     with_items:
-    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.service", dest: "/lib/systemd/system/lets-encrypt-cleanup.service" }
-    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.timer", dest: "/lib/systemd/system/lets-encrypt-cleanup.timer" }
-    - { src: "{{ playbook_dir }}/../lets-encrypt-create.service", dest: "/lib/systemd/system/lets-encrypt-create.service" }
-    - { src: "{{ playbook_dir }}/../lets-encrypt-create.timer", dest: "/lib/systemd/system/lets-encrypt-create.timer" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.service", dest: "{{ systemd_service_path }}/lets-encrypt-cleanup.service" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-cleanup.timer", dest: "{{ systemd_service_path }}/lets-encrypt-cleanup.timer" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.service", dest: "{{ systemd_service_path }}/lets-encrypt-create.service" }
+    - { src: "{{ playbook_dir }}/../lets-encrypt-create.timer", dest: "{{ systemd_service_path }}/lets-encrypt-create.timer" }
   
   - name: Enable and start Let's Encrypt custom systemd service
     become: yes

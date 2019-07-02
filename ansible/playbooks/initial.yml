@@ -1,7 +1,10 @@
 ---
 
-- name: Compile Nginx from sources
+- name: Initial setup
   hosts: all
+
+- name: ufw
+  import_playbook: ufw.yml
 
 - name: uriparser
   import_playbook: uriparser.yml

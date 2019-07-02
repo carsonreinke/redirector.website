@@ -3,6 +3,7 @@
 - name: Update Systemd Resolved configuration
   hosts: all
   tasks:
+  
   - name: Creating Resolved conf file
     become: yes
     copy:
@@ -11,6 +12,7 @@
       owner: root
       group: root
       mode: 0644
+  
   - name: Enable and start Systemd Resolved service
     become: yes
     systemd:
