@@ -1,5 +1,6 @@
 [Unit]
 Description=Let's Encrypt create new certificates every hour
+Requires=lets-encrypt-create.service
 
 [Timer]
 OnUnitActiveSec=1h

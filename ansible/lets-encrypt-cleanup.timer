@@ -1,5 +1,6 @@
 [Unit]
 Description=Let's Encrypt cleaup old certificates daily
+Requires=lets-encrypt-cleanup.service
 
 [Timer]
 OnUnitActiveSec=1d

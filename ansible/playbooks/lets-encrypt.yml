@@ -68,7 +68,7 @@
       name: "{{ item }}.timer"
       daemon_reload: yes
       enabled: yes
-      state: started
+      state: restarted
     with_items:
     - lets-encrypt-cleanup
     - lets-encrypt-create
