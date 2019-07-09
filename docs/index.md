@@ -23,6 +23,10 @@ Yes, `/path` will redirect `/path` and `/?utm_source=news4&utm_medium=email&utm_
 
 It will not redirect HTTP to HTTP and HTTPS to HTTPS, only what is configured in the DNS record will be used.
 
+## Do You Have A Demo?
+
+[This](http://demo.redirector.website) and [this](https://demo.redirector.website).
+
 ## Similar
 
 * [CloudFlare](https://support.cloudflare.com/hc/en-us/articles/200172286-Configuring-URL-forwarding-or-redirects-with-Cloudflare-Page-Rules)
