@@ -1,0 +1,14 @@
+---
+
+- name: Setup Logrotate
+  hosts: all
+  tasks:
+
+  - name: Add Nginx configuration
+    become: yes
+    copy:
+      src: "{{ playbook_dir }}/../logrotate-nginx.conf"
+      dest: "/etc/logrotate.d/nginx"
+      owner: root
+      group: root
+      mode: 0644

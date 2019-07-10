@@ -1,6 +1,6 @@
 ---
 
-- name: Setup unattended upgrades
+- name: Setup Unattended Upgrades
   hosts: all
   tasks:
 
@@ -12,3 +12,11 @@
       owner: root
       group: root
       mode: 0644
+  
+  - name: Enable and start Unattended Upgrades service
+    become: yes
+    systemd:
+      name: unattended-upgrades
+      daemon_reload: yes
+      enabled: yes
+      state: restarted

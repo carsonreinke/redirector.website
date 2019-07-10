@@ -15,6 +15,9 @@
 - name: unattended-upgrades
   import_playbook: unattended-upgrades.yml
 
+- name: logrotate
+  import_playbook: logrotate.yml
+
 - name: nginx
   import_playbook: nginx.yml
 
