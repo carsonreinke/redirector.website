@@ -1,0 +1,14 @@
+---
+
+- name: Setup unattended upgrades
+  hosts: all
+  tasks:
+
+  - name: Update local configuration
+    become: yes
+    copy:
+      src: "{{ playbook_dir }}/../unattended-upgrades.conf"
+      dest: "/etc/apt/apt.conf.d/50unattended-upgrades-local"
+      owner: root
+      group: root
+      mode: 0644

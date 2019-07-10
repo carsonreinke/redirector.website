@@ -12,6 +12,9 @@
 - name: resolved
   import_playbook: systemd-resolved.yml
 
+- name: unattended-upgrades
+  import_playbook: unattended-upgrades.yml
+
 - name: nginx
   import_playbook: nginx.yml
 
