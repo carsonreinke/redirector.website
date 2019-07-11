@@ -10,12 +10,18 @@
   </head>
 
   <body>
-
     <div class="container">
       <section id="main_content">
         {{ content }}
       </section>
     </div>
+
+    <footer>
+      <div class="container">
+        <p><a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>View on GitHub</a></p>
+        <p class="text-center">Built by <a href="https://reinke.co/">Carson Reinke</a></p>
+      </div>
+    </footer>
 
     {% if site.google_analytics %}
       <script>
