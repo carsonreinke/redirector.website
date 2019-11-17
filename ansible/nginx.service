@@ -12,6 +12,8 @@ ExecStartPost=/bin/sleep 0.1
 ExecReload=/usr/local/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
