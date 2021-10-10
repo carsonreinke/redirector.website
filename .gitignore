@@ -1,1 +1,2 @@
 ansible/playbooks/*.retry
+.vscode
