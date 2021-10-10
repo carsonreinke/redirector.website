@@ -11,6 +11,10 @@ $(which certbot) certificates | grep --color=none -o -P "(?<=Domains: )(.+)" | w
 
     if [[ $FLOATING_IP != $DOMAIN_IP ]]; then
         $(which certbot) delete -n -q --cert-name $DOMAIN
+        DIRECTORY="/var/local/www/$DOMAIN"
+        if [[ -d $DIRECTORY ]]; then
+            rm -Rf $DIRECTORY
+        fi
     fi
 done
 
