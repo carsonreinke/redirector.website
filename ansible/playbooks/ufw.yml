@@ -4,14 +4,24 @@
   hosts: all
   tasks:
 
-  - name: Apply ufw rule for ssh
+  - name: Apply ufw rule for ssh/2223
+    become: yes
     ufw:
       rule: limit
-      port: ssh
+      port: 2223
       proto: tcp
       log: no
-  
+
+  - name: Disable ufw rule for ssh/22
+    become: yes
+    ufw:
+      rule: deny
+      port: 22
+      proto: tcp
+      log: no
+
   - name: Apply ufw rules
+    become: yes
     ufw:
       rule: allow
       port: "{{ item }}"
@@ -22,6 +32,7 @@
     - "https"
   
   - name: Enable ufw
+    become: yes
     ufw:
       direction: incoming
       default: deny

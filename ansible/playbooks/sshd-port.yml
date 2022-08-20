@@ -1,0 +1,17 @@
+---
+
+- name: sshd Port
+  hosts: all
+  tasks:
+
+  - name: Change sshd port configuration  
+    become: yes  
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      regexp: "^Port"
+      line: "Port 2223"
+  - name: Restart sshd
+    become: yes
+    service:
+      name: sshd
+      state: restarted
