@@ -7,7 +7,7 @@ A free redirection/forwarding of one domain to another over both HTTP and HTTPS.
 If your domain is `example.com` and you want it to redirect to `example.org`, simply add the following two DNS records:
 
 ```
-example.com A 45.55.123.140
+example.com A X.X.X.X
 _redirect.example.com TXT "uri=http://example.org"
 ```
 
